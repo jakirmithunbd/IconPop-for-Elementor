@@ -1,0 +1,220 @@
+/* ===== IconPop for Elementor — Stylesheet ===== */
+
+/* Section wrapper */
+.iconpop-section {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+}
+
+/* Dark overlay on top of background image */
+.iconpop-bg-overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* Inner content sits above overlay */
+.iconpop-inner {
+	position: relative;
+	z-index: 1;
+	padding: 80px 40px;
+}
+
+/* ── Grid ─────────────────────────────────────────────────────── */
+
+.iconpop-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--iconpop-cols, 4), 1fr);
+	gap: 40px 30px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+/* ── Individual icon item ─────────────────────────────────────── */
+
+.iconpop-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	cursor: pointer;
+	position: relative;
+}
+
+/* Icon image container */
+.iconpop-icon-wrap {
+	position: relative;
+	display: inline-block;
+	line-height: 0;
+}
+
+/* Both images stack on top of each other */
+.iconpop-icon-img {
+	width: 100px;
+	height: 100px;
+	object-fit: contain;
+	display: block;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.iconpop-icon-placeholder {
+	width: 100px;
+	height: 100px;
+	background: rgba(255,255,255,0.15);
+	border-radius: 50%;
+}
+
+/* Hover icon sits on top, hidden by default */
+.iconpop-icon-hover {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+}
+
+/* On hover: hide default, reveal colour version */
+.iconpop-item:hover .iconpop-icon-default,
+.iconpop-item:focus .iconpop-icon-default {
+	opacity: 0;
+	transform: scale(0.92);
+}
+
+.iconpop-item:hover .iconpop-icon-hover,
+.iconpop-item:focus .iconpop-icon-hover {
+	opacity: 1;
+	transform: scale(1.05);
+}
+
+/* Icon label */
+.iconpop-label {
+	display: block;
+	margin-top: 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #ffffff;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	line-height: 1.4;
+}
+
+/* ── Modal overlay ────────────────────────────────────────────── */
+
+.iconpop-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+	z-index: 99998;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.iconpop-modal-overlay.is-open {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Panel card */
+.iconpop-modal-panel {
+	background: #ffffff;
+	border-radius: 8px;
+	border-top: 4px solid #0055b3;
+	padding: 36px 32px 28px;
+	max-width: 520px;
+	width: 90%;
+	max-height: 82vh;
+	overflow-y: auto;
+	position: relative;
+	transform: translateY(18px) scale(0.97);
+	transition: transform 0.25s ease;
+	box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+}
+
+.iconpop-modal-overlay.is-open .iconpop-modal-panel {
+	transform: translateY(0) scale(1);
+}
+
+/* Close button */
+.iconpop-modal-close {
+	position: absolute;
+	top: 14px;
+	right: 16px;
+	background: none;
+	border: none;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	color: #888;
+	padding: 4px 6px;
+	transition: color 0.2s;
+}
+
+.iconpop-modal-close:hover { color: #111; }
+
+/* Popup heading */
+.iconpop-popup-heading {
+	margin: 0 0 16px;
+	font-size: 20px;
+	font-weight: 700;
+	color: #111111;
+	padding-right: 28px;
+}
+
+/* Popup body (WYSIWYG output) */
+.iconpop-popup-body {
+	font-size: 15px;
+	line-height: 1.7;
+	color: #444444;
+}
+
+.iconpop-popup-body p       { margin: 0 0 12px; }
+.iconpop-popup-body h2,
+.iconpop-popup-body h3,
+.iconpop-popup-body h4      { margin: 16px 0 8px; }
+.iconpop-popup-body ul,
+.iconpop-popup-body ol      { padding-left: 20px; margin-bottom: 12px; }
+.iconpop-popup-body img     { max-width: 100%; height: auto; border-radius: 4px; margin: 8px 0; }
+.iconpop-popup-body a       { color: #0055b3; }
+
+/* CTA button */
+.iconpop-popup-btn {
+	display: inline-block;
+	margin-top: 20px;
+	padding: 10px 24px;
+	background: #0055b3;
+	color: #ffffff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 600;
+	transition: opacity 0.2s;
+}
+
+.iconpop-popup-btn:hover { opacity: 0.85; color: #ffffff; text-decoration: none; }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+
+@media ( max-width: 1024px ) {
+	.iconpop-grid { gap: 32px 20px; }
+}
+
+@media ( max-width: 768px ) {
+	.iconpop-grid {
+		grid-template-columns: repeat(3, 1fr) !important;
+		gap: 28px 16px;
+	}
+	.iconpop-inner { padding: 60px 24px; }
+}
+
+@media ( max-width: 480px ) {
+	.iconpop-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+		gap: 24px 12px;
+	}
+	.iconpop-inner { padding: 48px 16px; }
+	.iconpop-icon-img { width: 72px; height: 72px; }
+}
