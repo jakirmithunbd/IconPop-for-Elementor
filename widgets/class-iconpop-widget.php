@@ -166,40 +166,46 @@ class IconPop_Widget extends Widget_Base {
 			'tab'   => Controls_Manager::TAB_CONTENT,
 		] );
 
-		$this->add_control( 'columns', [
-			'label'   => esc_html__( 'Columns', 'iconpop-elementor' ),
-			'type'    => Controls_Manager::SELECT,
-			'default' => '4',
-			'options' => [
+		$this->add_responsive_control( 'grid_columns', [
+			'label'          => esc_html__( 'Columns', 'iconpop-elementor' ),
+			'type'           => Controls_Manager::SELECT,
+			'default'        => '6',
+			'tablet_default' => '4',
+			'mobile_default' => '2',
+			'options'        => [
+				'1' => '1',
+				'2' => '2',
 				'3' => '3',
 				'4' => '4',
+				'5' => '5',
 				'6' => '6',
 			],
-		] );
-
-		$this->add_control( 'icon_size', [
-			'label'      => esc_html__( 'Icon Size (px)', 'iconpop-elementor' ),
-			'type'       => Controls_Manager::SLIDER,
-			'size_units' => [ 'px' ],
-			'range'      => [ 'px' => [ 'min' => 60, 'max' => 200, 'step' => 5 ] ],
-			'default'    => [ 'unit' => 'px', 'size' => 100 ],
-			'selectors'  => [
-				'{{WRAPPER}} .iconpop-icon-img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+			'selectors' => [
+				'{{WRAPPER}} .iconpop-layout' => 'grid-template-columns: repeat({{VALUE}}, 1fr);',
 			],
 		] );
 
-		$this->add_control( 'section_padding', [
-			'label'      => esc_html__( 'Section Padding', 'iconpop-elementor' ),
-			'type'       => Controls_Manager::DIMENSIONS,
-			'size_units' => [ 'px', 'em', '%' ],
-			'default'    => [
-				'top'    => '80',
-				'right'  => '40',
-				'bottom' => '80',
-				'left'   => '40',
-				'unit'   => 'px',
+		$this->add_responsive_control( 'grid_gap', [
+			'label'          => esc_html__( 'Gap', 'iconpop-elementor' ),
+			'type'           => Controls_Manager::SLIDER,
+			'size_units'     => [ 'px' ],
+			'range'          => [ 'px' => [ 'min' => 0, 'max' => 80, 'step' => 2 ] ],
+			'default'        => [ 'unit' => 'px', 'size' => 32 ],
+			'tablet_default' => [ 'unit' => 'px', 'size' => 24 ],
+			'mobile_default' => [ 'unit' => 'px', 'size' => 16 ],
+			'selectors'      => [
+				'{{WRAPPER}} .iconpop-layout' => 'gap: {{SIZE}}px;',
 			],
-			'selectors'  => [
+		] );
+
+		$this->add_responsive_control( 'section_padding', [
+			'label'          => esc_html__( 'Section Padding', 'iconpop-elementor' ),
+			'type'           => Controls_Manager::DIMENSIONS,
+			'size_units'     => [ 'px', 'em', '%' ],
+			'default'        => [ 'top' => '80', 'right' => '40', 'bottom' => '80', 'left' => '40', 'unit' => 'px' ],
+			'tablet_default' => [ 'top' => '60', 'right' => '24', 'bottom' => '60', 'left' => '24', 'unit' => 'px' ],
+			'mobile_default' => [ 'top' => '40', 'right' => '16', 'bottom' => '40', 'left' => '16', 'unit' => 'px' ],
+			'selectors'      => [
 				'{{WRAPPER}} .iconpop-inner' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 			],
 		] );
@@ -232,6 +238,11 @@ class IconPop_Widget extends Widget_Base {
 			'tab'   => Controls_Manager::TAB_STYLE,
 		] );
 
+		/*
+		 * Popup lives at <body> level (JS appends it there so position:fixed
+		 * works regardless of any transform/overflow on Elementor wrappers).
+		 * These selectors are intentionally global — no {{WRAPPER}} prefix.
+		 */
 		$this->add_control( 'popup_bg', [
 			'label'     => esc_html__( 'Background', 'iconpop-elementor' ),
 			'type'      => Controls_Manager::COLOR,
@@ -240,7 +251,7 @@ class IconPop_Widget extends Widget_Base {
 		] );
 
 		$this->add_control( 'popup_accent', [
-			'label'     => esc_html__( 'Accent / Border Color', 'iconpop-elementor' ),
+			'label'     => esc_html__( 'Accent / Top Border Color', 'iconpop-elementor' ),
 			'type'      => Controls_Manager::COLOR,
 			'default'   => '#0055b3',
 			'selectors' => [ '.iconpop-modal-panel' => 'border-top-color: {{VALUE}};' ],
@@ -259,7 +270,7 @@ class IconPop_Widget extends Widget_Base {
 		] );
 
 		$this->add_control( 'popup_text_color', [
-			'label'     => esc_html__( 'Content Color', 'iconpop-elementor' ),
+			'label'     => esc_html__( 'Body Text Color', 'iconpop-elementor' ),
 			'type'      => Controls_Manager::COLOR,
 			'default'   => '#444444',
 			'selectors' => [ '.iconpop-modal-panel .iconpop-popup-body' => 'color: {{VALUE}};' ],
@@ -315,14 +326,13 @@ class IconPop_Widget extends Widget_Base {
 	protected function render() {
 		$s       = $this->get_settings_for_display();
 		$items   = $s['icons'] ?? [];
-		$cols    = (int) ( $s['columns'] ?? 4 );
 		$bg_url  = $s['bg_image']['url'] ?? '';
 		$bg_pos  = esc_attr( $s['bg_position'] ?? 'center center' );
 		$bg_size = esc_attr( $s['bg_size'] ?? 'cover' );
 
-		$wrapper_style = '';
+		$section_style = '';
 		if ( $bg_url ) {
-			$wrapper_style = sprintf(
+			$section_style = sprintf(
 				'background-image:url(%s);background-position:%s;background-size:%s;background-repeat:no-repeat;',
 				esc_url( $bg_url ),
 				$bg_pos,
@@ -330,82 +340,74 @@ class IconPop_Widget extends Widget_Base {
 			);
 		}
 		?>
-		<div class="iconpop-section" style="<?php echo $wrapper_style; ?>">
+		<div class="iconpop-section" style="<?php echo $section_style; ?>">
+
 			<div class="iconpop-bg-overlay"></div>
+
 			<div class="iconpop-inner">
-				<div class="iconpop-grid" style="--iconpop-cols:<?php echo $cols; ?>;">
+				<div class="iconpop-layout">
 					<?php foreach ( $items as $index => $item ) :
 						$default_img = $item['item_icon_default']['url'] ?? '';
-						$hover_img   = $item['item_icon_hover']['url']   ?? '';
-						$btn_text    = trim( $item['popup_btn_text'] ?? '' );
-						$btn_url     = $item['popup_btn_url']['url']     ?? '';
-						$btn_target  = ( $item['popup_btn_url']['is_external'] ?? '' ) ? '_blank' : '_self';
-						$btn_norel   = ( $item['popup_btn_url']['nofollow']    ?? '' ) ? 'nofollow' : '';
+						$hover_img   = ! empty( $item['item_icon_hover']['url'] ) ? $item['item_icon_hover']['url'] : $default_img;
 					?>
-					<div class="iconpop-item elementor-repeater-item-<?php echo esc_attr( $item['_id'] ); ?>"
-					     data-index="<?php echo (int) $index; ?>"
+					<div class="iconpop-item iconpop-item-<?php echo ( $index + 1 ); ?> elementor-repeater-item-<?php echo esc_attr( $item['_id'] ); ?>"
+					     data-idx="<?php echo (int) $index; ?>"
 					     role="button"
 					     tabindex="0"
-					     aria-haspopup="true">
+					     aria-haspopup="dialog">
 
 						<div class="iconpop-icon-wrap">
 							<?php if ( $default_img ) : ?>
 								<img class="iconpop-icon-img iconpop-icon-default"
 								     src="<?php echo esc_url( $default_img ); ?>"
 								     alt="<?php echo esc_attr( $item['item_label'] ); ?>">
-							<?php else : ?>
-								<div class="iconpop-icon-placeholder iconpop-icon-default"></div>
-							<?php endif; ?>
-
-							<?php if ( $hover_img ) : ?>
 								<img class="iconpop-icon-img iconpop-icon-hover"
 								     src="<?php echo esc_url( $hover_img ); ?>"
 								     alt="<?php echo esc_attr( $item['item_label'] ); ?>">
-							<?php elseif ( $default_img ) : ?>
-								<img class="iconpop-icon-img iconpop-icon-hover"
-								     src="<?php echo esc_url( $default_img ); ?>"
-								     alt="<?php echo esc_attr( $item['item_label'] ); ?>">
 							<?php else : ?>
+								<div class="iconpop-icon-placeholder iconpop-icon-default"></div>
 								<div class="iconpop-icon-placeholder iconpop-icon-hover"></div>
 							<?php endif; ?>
 						</div>
 
-						<?php if ( $item['item_label'] ) : ?>
+						<?php if ( ! empty( $item['item_label'] ) ) : ?>
 						<span class="iconpop-label"><?php echo esc_html( $item['item_label'] ); ?></span>
 						<?php endif; ?>
-
-						<!-- Hidden popup data (read by JS) -->
-						<template class="iconpop-tpl">
-							<div class="iconpop-modal-panel">
-								<button class="iconpop-modal-close" aria-label="<?php esc_attr_e( 'Close', 'iconpop-elementor' ); ?>">&#x2715;</button>
-								<?php if ( $item['popup_heading'] ) : ?>
-								<h3 class="iconpop-popup-heading"><?php echo esc_html( $item['popup_heading'] ); ?></h3>
-								<?php endif; ?>
-								<div class="iconpop-popup-body">
-									<?php echo wp_kses_post( $item['popup_content'] ); ?>
-								</div>
-								<?php if ( $btn_text && $btn_url ) : ?>
-								<a class="iconpop-popup-btn"
-								   href="<?php echo esc_url( $btn_url ); ?>"
-								   target="<?php echo esc_attr( $btn_target ); ?>"
-								   <?php echo $btn_norel ? 'rel="nofollow"' : ''; ?>>
-									<?php echo esc_html( $btn_text ); ?>
-								</a>
-								<?php endif; ?>
-							</div>
-						</template>
 
 					</div>
 					<?php endforeach; ?>
 				</div>
 			</div>
-		</div>
 
-		<!-- Global modal overlay (created once per page by JS) -->
+			<?php
+			/* Popup content stores — hidden, one per item, scoped inside widget */
+			foreach ( $items as $index => $item ) :
+				$btn_text   = trim( $item['popup_btn_text'] ?? '' );
+				$btn_url    = $item['popup_btn_url']['url'] ?? '';
+				$btn_target = ( $item['popup_btn_url']['is_external'] ?? '' ) ? '_blank' : '_self';
+				$btn_rel    = ( $item['popup_btn_url']['nofollow']    ?? '' ) ? ' rel="nofollow"' : '';
+			?>
+			<div class="iconpop-popup-store" data-idx="<?php echo (int) $index; ?>" style="display:none;" aria-hidden="true">
+				<?php if ( ! empty( $item['popup_heading'] ) ) : ?>
+				<h3 class="iconpop-popup-heading"><?php echo esc_html( $item['popup_heading'] ); ?></h3>
+				<?php endif; ?>
+				<div class="iconpop-popup-body">
+					<?php echo wp_kses_post( $item['popup_content'] ); ?>
+				</div>
+				<?php if ( $btn_text && $btn_url ) : ?>
+				<a class="iconpop-popup-btn"
+				   href="<?php echo esc_url( $btn_url ); ?>"
+				   target="<?php echo esc_attr( $btn_target ); ?>"
+				   <?php echo $btn_rel; ?>>
+					<?php echo esc_html( $btn_text ); ?>
+				</a>
+				<?php endif; ?>
+			</div>
+			<?php endforeach; ?>
+
+		</div><!-- .iconpop-section -->
 		<?php
 	}
 
-	protected function content_template() {
-		// Server-side rendering is used; JS preview is minimal.
-	}
+	protected function content_template() {}
 }

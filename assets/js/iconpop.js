@@ -1,90 +1,138 @@
-/* IconPop for Elementor — popup interaction */
-( function ( $ ) {
+/* IconPop for Elementor v1.5 */
+( function () {
 	'use strict';
 
-	var overlay  = null;
-	var panelWrap = null;
+	var modal    = null;
+	var content  = null;
+	var closeBtn = null;
+	var closeTimer = null;
 
-	/* ── Build the shared modal overlay once ── */
-	function buildOverlay() {
-		if ( overlay ) return;
+	/* Transition duration must match CSS (.is-closing transitions = 0.38s) */
+	var CLOSE_MS = 400;
 
-		overlay = $( '<div class="iconpop-modal-overlay" role="dialog" aria-modal="true" tabindex="-1"></div>' );
-		panelWrap = $( '<div class="iconpop-modal-panel-wrap"></div>' );
-		overlay.append( panelWrap );
-		$( 'body' ).append( overlay );
+	function buildModal() {
+		if ( modal ) return;
 
-		/* Close on overlay background click */
-		overlay.on( 'click', function ( e ) {
-			if ( $( e.target ).is( overlay ) ) closeModal();
-		} );
+		modal = document.createElement( 'div' );
+		modal.className = 'iconpop-modal';
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
 
-		/* Close on Escape key */
-		$( document ).on( 'keydown.iconpop', function ( e ) {
-			if ( e.key === 'Escape' ) closeModal();
+		modal.innerHTML =
+			'<div class="iconpop-modal-backdrop"></div>' +
+			'<div class="iconpop-modal-panel">' +
+				'<button class="iconpop-modal-close" type="button" aria-label="Close">&#x2715;</button>' +
+				'<div class="iconpop-modal-content"></div>' +
+			'</div>';
+
+		modal.style.display = 'none';
+		document.body.appendChild( modal );
+
+		content  = modal.querySelector( '.iconpop-modal-content' );
+		closeBtn = modal.querySelector( '.iconpop-modal-close' );
+
+		modal.querySelector( '.iconpop-modal-backdrop' )
+		     .addEventListener( 'click', closeModal );
+		closeBtn.addEventListener( 'click', closeModal );
+
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' && modal.style.display !== 'none' ) {
+				closeModal();
+			}
 		} );
 	}
 
-	/* ── Open modal with content from <template> ── */
-	function openModal( $item ) {
-		buildOverlay();
+	function openModal( section, idx ) {
+		buildModal();
 
-		var tpl = $item.find( '.iconpop-tpl' )[0];
-		if ( ! tpl ) return;
+		/* Cancel any in-progress close */
+		if ( closeTimer ) {
+			clearTimeout( closeTimer );
+			closeTimer = null;
+			modal.classList.remove( 'is-closing' );
+		}
 
-		/* Clone the template content */
-		var content = $( document.importNode( tpl.content, true ) );
-		panelWrap.empty().append( content );
+		var store = section.querySelector(
+			'.iconpop-popup-store[data-idx="' + idx + '"]'
+		);
+		if ( ! store ) {
+			console.warn( 'IconPop: no popup store found for idx=' + idx );
+			return;
+		}
 
-		/* Wire up the close button inside the freshly cloned panel */
-		panelWrap.find( '.iconpop-modal-close' ).on( 'click', closeModal );
+		content.innerHTML = store.innerHTML;
+		modal.style.display = 'flex';
+		document.body.style.overflow = 'hidden';
 
-		overlay.addClass( 'is-open' );
-		overlay.focus();
+		/* Two rAFs: first makes element visible, second triggers transitions */
+		requestAnimationFrame( function () {
+			requestAnimationFrame( function () {
+				modal.classList.add( 'is-open' );
+				if ( closeBtn ) closeBtn.focus();
+			} );
+		} );
 	}
 
 	function closeModal() {
-		if ( overlay ) {
-			overlay.removeClass( 'is-open' );
-		}
+		if ( ! modal || modal.style.display === 'none' ) return;
+
+		modal.classList.remove( 'is-open' );
+		modal.classList.add( 'is-closing' );
+
+		closeTimer = setTimeout( function () {
+			modal.classList.remove( 'is-closing' );
+			modal.style.display = 'none';
+			document.body.style.overflow = '';
+			closeTimer = null;
+		}, CLOSE_MS );
 	}
 
-	/* ── Init icon items ── */
-	function initItems( context ) {
-		$( '.iconpop-item', context ).each( function () {
-			var $item = $( this );
-			if ( $item.data( 'iconpop-init' ) ) return;
-			$item.data( 'iconpop-init', true );
+	/* ── Attach listeners to one section ──────────────────────── */
 
-			/* Click / Enter to open popup */
-			$item.on( 'click', function () {
-				openModal( $item );
+	function initSection( section ) {
+		section.querySelectorAll( '.iconpop-item' ).forEach( function ( item ) {
+			if ( item.dataset.iconpopBound ) return;
+			item.dataset.iconpopBound = '1';
+
+			item.addEventListener( 'click', function () {
+				openModal( section, this.getAttribute( 'data-idx' ) );
 			} );
 
-			$item.on( 'keydown', function ( e ) {
+			item.addEventListener( 'keydown', function ( e ) {
 				if ( e.key === 'Enter' || e.key === ' ' ) {
 					e.preventDefault();
-					openModal( $item );
+					openModal( section, this.getAttribute( 'data-idx' ) );
 				}
 			} );
 		} );
 	}
 
-	/* ── Run on DOM ready ── */
-	$( function () {
-		initItems( document );
-	} );
+	function initAll() {
+		document.querySelectorAll( '.iconpop-section' ).forEach( initSection );
+	}
 
-	/* ── Re-init after Elementor frontend re-renders ── */
-	$( window ).on( 'elementor/frontend/init', function () {
-		if ( window.elementorFrontend ) {
-			elementorFrontend.hooks.addAction(
-				'frontend/element_ready/iconpop_widget.default',
-				function ( $scope ) {
-					initItems( $scope[0] );
-				}
-			);
-		}
-	} );
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', initAll );
+	} else {
+		initAll();
+	}
 
-} )( jQuery );
+	/* Elementor editor: re-init when widget re-renders */
+	function attachElementorHook() {
+		if ( ! window.elementorFrontend ) return;
+		elementorFrontend.hooks.addAction(
+			'frontend/element_ready/iconpop_widget.default',
+			function ( $scope ) {
+				var section = $scope[ 0 ].querySelector( '.iconpop-section' );
+				if ( section ) initSection( section );
+			}
+		);
+	}
+
+	if ( window.elementorFrontend && window.elementorFrontend.isInit ) {
+		attachElementorHook();
+	} else {
+		window.addEventListener( 'elementor/frontend/init', attachElementorHook );
+	}
+
+} )();

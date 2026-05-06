@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ICONPOP_VERSION', '1.0.0' );
+define( 'ICONPOP_VERSION', '1.6.0' );
 define( 'ICONPOP_PATH',    plugin_dir_path( __FILE__ ) );
 define( 'ICONPOP_URL',     plugin_dir_url( __FILE__ ) );
 
