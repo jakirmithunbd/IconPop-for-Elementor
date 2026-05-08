@@ -29,14 +29,14 @@ class IconPop_Widget extends Widget_Base {
 			'iconpop-style',
 			ICONPOP_URL . 'assets/css/iconpop.css',
 			[],
-			ICONPOP_VERSION
+			wp_rand()
 		);
 
 		wp_register_script(
 			'iconpop-script',
 			ICONPOP_URL . 'assets/js/iconpop.js',
 			[ 'jquery' ],
-			ICONPOP_VERSION,
+			wp_rand(),
 			true
 		);
 	}

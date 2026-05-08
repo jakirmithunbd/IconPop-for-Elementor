@@ -17,29 +17,92 @@
 .iconpop-inner {
 	position: relative;
 	z-index: 1;
-	padding: 60px 20px;
 }
 
 /* ── Grid layout ─────────────────────────────────────────────── */
 
 .iconpop-layout {
-	display: grid;
-	grid-template-columns: repeat(6, 1fr);
-	gap: 32px 16px;
+	display: flex;
+	    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 	width: 100%;
+}
+
+@media only screen and ( min-width: 1024px) {
+	.iconpop-layout {
+		right: -135px;
+	}
 }
 
 /* ── Each icon item ───────────────────────────────────────────── */
 
-.iconpop-item {
+.iconpop-layout .iconpop-item {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
 	cursor: pointer;
+	position: relative;
+	flex: 0 0 14%;
 }
 
-.iconpop-item:focus { outline: none; }
+@media only screen and ( min-width: 1024px) {
+	.iconpop-layout .iconpop-item-2 { 
+		left: -80px;
+        top: 50px;
+	}
+
+	.iconpop-layout .iconpop-item-3 { 
+		left: -165px;
+	}
+
+	.iconpop-layout .iconpop-item-4 { 
+		left: -280px;
+		top: 90px;
+	}
+
+	.iconpop-layout .iconpop-item-5 { 
+		left: -310px;
+    	top: 65px;
+	}
+
+	.iconpop-layout .iconpop-item-6 { 
+		left: -375px;
+top: 80px;
+	}
+
+	.iconpop-layout .iconpop-item-7 { 
+		top: -45px;
+        left: 25px;
+	}
+
+	.iconpop-layout .iconpop-item-8 { 
+		left: 35px;
+		bottom: -15px;
+	}
+
+	.iconpop-layout .iconpop-item-9 { 
+		left: -40px;
+        top: 50px;
+	}
+
+	.iconpop-layout .iconpop-item-10 { 
+		left: -125px;
+	}
+
+	.iconpop-layout .iconpop-item-11 { 
+		left: -143px;
+		top: 5px;
+	}
+
+	.iconpop-layout .iconpop-item-12 { 
+		left: -235px;
+    	top: -60px;
+	}
+}
+
+.iconpop-layout .iconpop-item:focus { outline: none; }
 
 /* ── Icon wrap & images ───────────────────────────────────────── */
 
@@ -102,7 +165,6 @@
 	font-weight: 700;
 	color: #ffffff;
 	letter-spacing: 0.06em;
-	text-transform: uppercase;
 	line-height: 1.3;
 	text-shadow: 0 1px 5px rgba(0,0,0,0.75);
 }
