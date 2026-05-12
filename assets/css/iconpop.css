@@ -22,18 +22,21 @@
 /* ── Grid layout ─────────────────────────────────────────────── */
 
 .iconpop-layout {
+	width: 100%;
+	max-width: 1360px;
+	margin: 0 auto;
 	display: flex;
-	    display: flex;
     align-items: center;
+	justify-content: center;
     flex-wrap: wrap;
 	width: 100%;
 }
 
-@media only screen and ( min-width: 1024px) {
+/* @media only screen and ( min-width: 1024px) {
 	.iconpop-layout {
 		right: -135px;
 	}
-}
+} */
 
 /* ── Each icon item ───────────────────────────────────────────── */
 
@@ -47,58 +50,65 @@
 	flex: 0 0 14%;
 }
 
-@media only screen and ( min-width: 1024px) {
+@media only screen and ( min-width: 1401px) {
+
+	.iconpop-layout .iconpop-item-1 {
+		left: 166px;
+		top: 3px;
+	}
 	.iconpop-layout .iconpop-item-2 { 
-		left: -80px;
-        top: 50px;
+		left: 39px;
+        top: 95px;
 	}
 
 	.iconpop-layout .iconpop-item-3 { 
-		left: -165px;
+		left: -77px;
+        top: 16px;
 	}
 
 	.iconpop-layout .iconpop-item-4 { 
-		left: -280px;
-		top: 90px;
+		left: -205px;
+		top: 110px;
 	}
 
 	.iconpop-layout .iconpop-item-5 { 
-		left: -310px;
-    	top: 65px;
+		left: -217px;
+    	top: 56px;
 	}
 
 	.iconpop-layout .iconpop-item-6 { 
-		left: -375px;
-		top: 80px;
+		left: -308px;
+		top: 34px;
 	}
 
 	.iconpop-layout .iconpop-item-7 { 
-		top: -45px;
-        left: 25px;
+		top: -8px;
+        left: 184px;
 	}
 
 	.iconpop-layout .iconpop-item-8 { 
-		left: 35px;
-		bottom: -15px;
+		left: 181px;
+		bottom: -18px;
 	}
 
 	.iconpop-layout .iconpop-item-9 { 
-		left: -40px;
-        top: 50px;
+		left: 90px;
+        top: 38px;
 	}
 
 	.iconpop-layout .iconpop-item-10 { 
-		left: -125px;
+		left: -13px;
+        top: -24px;
 	}
 
 	.iconpop-layout .iconpop-item-11 { 
-		left: -143px;
-		top: 5px;
+		left: -44px;
+		top: -52px;
 	}
 
 	.iconpop-layout .iconpop-item-12 { 
-		left: -235px;
-    	top: -60px;
+		left: -149px;
+    	top: -113px;
 	}
 }
 
@@ -161,7 +171,7 @@
 .iconpop-label {
 	display: block;
 	margin-top: 10px;
-	font-size: 11px;
+	font-size: 16px;
 	font-weight: 700;
 	color: #ffffff;
 	letter-spacing: 0.06em;
@@ -304,11 +314,29 @@
    Only non-Elementor-managed adjustments live below.
 ─────────────────────────────────────────────────────────────── */
 
+
+@media ( min-width: 1400px ) {
+	.iconpop-label { display: none; }
+}
+@media ( max-width: 1024px ) {
+	.iconpop-layout .iconpop-item {
+		flex: 0 0 22%;
+	}
+}
 @media ( max-width: 767px ) {
+	.iconpop-layout .iconpop-item {
+		flex: 0 0 32%;
+	}
 	.iconpop-label { font-size: 9px; }
 	.iconpop-modal-panel {
 		padding: 28px 16px 22px;
 		border-radius: 8px;
 	}
 	.iconpop-modal-panel .iconpop-popup-heading { font-size: 18px; }
+}
+
+@media ( max-width: 575px ) {
+	.iconpop-layout .iconpop-item {
+		flex: 0 0 48%;
+	}
 }
