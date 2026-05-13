@@ -279,6 +279,9 @@
 .iconpop-modal-panel .iconpop-popup-body h2,
 .iconpop-modal-panel .iconpop-popup-body h3,
 .iconpop-modal-panel .iconpop-popup-body h4      { margin: 16px 0 8px; font-weight: 600; }
+.iconpop-modal-panel .iconpop-popup-body h4 {
+	font-size: 20px;
+}
 .iconpop-modal-panel .iconpop-popup-body ul,
 .iconpop-modal-panel .iconpop-popup-body ol      { padding-left: 22px; margin-bottom: 12px; }
 .iconpop-modal-panel .iconpop-popup-body li      { margin-bottom: 4px; }
