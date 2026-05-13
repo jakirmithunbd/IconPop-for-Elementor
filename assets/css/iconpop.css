@@ -23,20 +23,13 @@
 
 .iconpop-layout {
 	width: 100%;
-	max-width: 1360px;
+	max-width: 1100px;
 	margin: 0 auto;
 	display: flex;
-    align-items: center;
 	justify-content: center;
     flex-wrap: wrap;
 	width: 100%;
 }
-
-/* @media only screen and ( min-width: 1024px) {
-	.iconpop-layout {
-		right: -135px;
-	}
-} */
 
 /* ── Each icon item ───────────────────────────────────────────── */
 
@@ -47,48 +40,51 @@
 	text-align: center;
 	cursor: pointer;
 	position: relative;
-	flex: 0 0 14%;
+	flex: 0 0 15%;
 }
 
-@media only screen and ( min-width: 1401px) {
-
+@media only screen and ( min-width: 1200px) {
+	.iconpop-layout {
+		align-items: center;
+		gap: 0 !important;
+	}
 	.iconpop-layout .iconpop-item-1 {
-		left: 166px;
-		top: 3px;
+		left: 108px;
+		top: -40px;
 	}
 	.iconpop-layout .iconpop-item-2 { 
-		left: 39px;
-        top: 95px;
+		left: 37px;
+        top: 26px;
 	}
 
 	.iconpop-layout .iconpop-item-3 { 
-		left: -77px;
-        top: 16px;
+		left: -26px;
+        top: -28px;
 	}
 
 	.iconpop-layout .iconpop-item-4 { 
-		left: -205px;
-		top: 110px;
+		left: -138px;
+		top: 73px;
 	}
 
 	.iconpop-layout .iconpop-item-5 { 
-		left: -217px;
-    	top: 56px;
+		left: -148px;
+    	top: 8px;
 	}
 
 	.iconpop-layout .iconpop-item-6 { 
-		left: -308px;
-		top: 34px;
+		left: -200px;
+		top: -11px;
 	}
 
 	.iconpop-layout .iconpop-item-7 { 
-		top: -8px;
-        left: 184px;
+		top: -35px;
+        left: 136px;
 	}
 
 	.iconpop-layout .iconpop-item-8 { 
-		left: 181px;
-		bottom: -18px;
+		left: 141px;
+		bottom: -21px;
 	}
 
 	.iconpop-layout .iconpop-item-9 { 
@@ -97,18 +93,18 @@
 	}
 
 	.iconpop-layout .iconpop-item-10 { 
-		left: -13px;
-        top: -24px;
+		left: 18px;
+        top: -32px;
 	}
 
 	.iconpop-layout .iconpop-item-11 { 
-		left: -44px;
-		top: -52px;
+		left: 1px;
+		top: -57px;
 	}
 
 	.iconpop-layout .iconpop-item-12 { 
-		left: -149px;
-    	top: -113px;
+		left: -61px;
+    	top: -110px;
 	}
 }
 
@@ -315,8 +311,31 @@
 ─────────────────────────────────────────────────────────────── */
 
 
-@media ( min-width: 1400px ) {
-	.iconpop-label { display: none; }
+@media ( min-width: 1200px ) {
+	.iconpop-item {
+		position: relative;
+	}
+	.iconpop-label { 
+		position: absolute;
+		left: 80%;
+		top: 20%;
+		background: #00496E;
+		border: 2px solid #FFFFFF33;
+		padding: 8px 5px;
+		z-index: 1;
+		opacity: 0;
+		visibility: hidden;
+		transition: all .3s ease;
+	}
+	.iconpop-item:hover .iconpop-label {
+		opacity: 1;
+		visibility: visible;
+	}
+}
+@media ( max-width: 1199px ) {
+	.iconpop-layout .iconpop-item {
+		flex: 0 0 13%;
+	}
 }
 @media ( max-width: 1024px ) {
 	.iconpop-layout .iconpop-item {
@@ -327,7 +346,6 @@
 	.iconpop-layout .iconpop-item {
 		flex: 0 0 32%;
 	}
-	.iconpop-label { font-size: 9px; }
 	.iconpop-modal-panel {
 		padding: 28px 16px 22px;
 		border-radius: 8px;
@@ -337,6 +355,6 @@
 
 @media ( max-width: 575px ) {
 	.iconpop-layout .iconpop-item {
-		flex: 0 0 48%;
+		flex: 0 0 47%;
 	}
 }
